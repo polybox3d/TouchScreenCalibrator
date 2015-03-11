@@ -1,0 +1,3 @@
+[submodule "xinput_calibrator"]
+	path = xinput_calibrator
+	url = https://github.com/polybox3d/xinput_calibrator

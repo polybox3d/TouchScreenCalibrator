@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>img/deksptop.png</file>
+        <file>img/xinput_calibrator.png</file>
+    </qresource>
+</RCC>
