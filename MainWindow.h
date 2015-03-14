@@ -6,10 +6,14 @@
 #include <QPushButton>
 #include <QProcess>
 #include <QMessageBox>
+#include <QFileDialog>
+#include <QTextStream>
+#include <QAction>
 
 #include "Calibration.h"
 
 #define DELAY_UPDATE_UI 50 // ms
+#define XINPUT_COMMAND "/usr/bin/xinput"
 
 namespace Ui {
 class MainWindow;
@@ -58,6 +62,16 @@ private slots:
     void on_threshold_editingFinished();
 
     void on_test_clicked();
+
+    void on_save_clicked();
+
+    void on_load_clicked();
+
+    void on_apply_clicked();
+
+    void on_allDevice_stateChanged(int arg1);
+
+    void on_availableDevice_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;

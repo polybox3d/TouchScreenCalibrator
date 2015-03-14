@@ -2,6 +2,10 @@
 #define CALIBRATION_H
 
 #include <QObject>
+#include <QMessageBox>
+#include <QFile>
+#include <QSettings>
+#include <QDir>
 
 class Calibration : public QObject
 {
@@ -34,11 +38,15 @@ public:
     int device_id () const;
     void setDevice_id ( int device_id ) ;
 
+    QString device_name () const;
+    void setDevice_name ( QString device_name ) ;
+
 
     int threshold () const;
     void setThreshold ( int threshold ) ;
 
-    QString getXInputFormat();
+    int saveToFile( QString path );
+    void loadFromFile( QString filename);
 
 
 signals:
