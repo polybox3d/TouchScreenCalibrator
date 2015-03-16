@@ -3,4 +3,7 @@
         <file>img/deksptop.png</file>
         <file>img/xinput_calibrator.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>fontawesome-webfont.ttf</file>
+    </qresource>
 </RCC>
