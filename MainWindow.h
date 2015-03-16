@@ -13,6 +13,7 @@
 #include "Calibration.h"
 
 #define DELAY_UPDATE_UI 50 // ms
+#define DELAY_UPDATE_LIST 5000 // ms
 #define XINPUT_COMMAND "/usr/bin/xinput"
 
 namespace Ui {
@@ -58,6 +59,7 @@ private slots:
     void xinputcalibratorFinished(int,QProcess::ExitStatus);
     void xinputcalibratorError(QProcess::ProcessError);
 
+    void xinputList(int,QProcess::ExitStatus);
 
     void on_threshold_editingFinished();
 
@@ -73,13 +75,17 @@ private slots:
 
     void on_availableDevice_currentIndexChanged(int index);
 
+    void updateXinputCalibratorList();
+
 private:
     Ui::MainWindow *ui;
 
     Calibration _calibration;
     QTimer _update_ui;
+    QTimer _update_list;
     int _increasedValue;
     QProcess* _xinput_calibrator;
+    QProcess *_xlist;
 
     void repaintButtons( QPushButton* b, bool state);
 };

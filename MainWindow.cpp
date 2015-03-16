@@ -10,11 +10,48 @@ MainWindow::MainWindow(QWidget *parent) :
     _increasedValue = 1 ;
     _update_ui.start( DELAY_UPDATE_UI );
     connect(&_update_ui, SIGNAL(timeout()), this, SLOT(updateUi()));
+
+    _update_list.start( DELAY_UPDATE_LIST );
+    connect(&_update_list, SIGNAL(timeout()), this, SLOT(updateXinputCalibratorList()));
+
+    updateUi();
+    updateXinputCalibratorList();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::xinputList(int, QProcess::ExitStatus)
+{
+    QByteArray data;
+    data.append(_xlist->readAllStandardError() );
+    data.append( _xlist->readAllStandardOutput() );
+    if ( data.indexOf("Error:") != -1 )
+    {
+        ui->availableDevice->clear();
+        ui->startCalibration->setEnabled( false );
+    }
+    else
+    {
+        ui->startCalibration->setEnabled( true );
+    }
+}
+
+void MainWindow::updateXinputCalibratorList()
+{
+    QString command = "../xinput_calibrator/src/xinput_calibrator";
+    QStringList parameters;
+    /*if ( ui->availableDevice->count() == 0 )
+    {
+        parameters << "--fake";
+    }*/
+    QByteArray data;
+    _xlist = new QProcess( this );
+    connect( _xlist , SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(xinputList(int,QProcess::ExitStatus)));
+    //connect( _xlist , SIGNAL(error(QProcess::ProcessError)), this,SLOT(xinputList(QProcess::ProcessError)));
+    _xlist->start( command, parameters);
 }
 
 void MainWindow::updateUi()
@@ -100,7 +137,7 @@ void MainWindow::xinputcalibratorFinished(int exitCode, QProcess::ExitStatus exi
 {
 
     QMessageBox messageBox;
-    messageBox.information(0, "Information",_xinput_calibrator->readAll());
+    messageBox.information(0, "Information",_xinput_calibrator->readAllStandardOutput()+_xinput_calibrator->readAllStandardError());
     messageBox.setFixedSize(500,200);
 
 }
@@ -120,10 +157,10 @@ void MainWindow::on_startCalibration_clicked()
     }
     QString command = "../xinput_calibrator/src/xinput_calibrator";
     QStringList parameters;
-    if ( ui->availableDevice->count() == 0 )
+    /*if ( ui->availableDevice->count() == 0 )
     {
         parameters << "--fake";
-    }
+    }*/
     _xinput_calibrator = new QProcess( this );
     connect( _xinput_calibrator , SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(xinputcalibratorFinished(int,QProcess::ExitStatus)));
     connect( _xinput_calibrator , SIGNAL(error(QProcess::ProcessError)), this,SLOT(xinputcalibratorError(QProcess::ProcessError)));
