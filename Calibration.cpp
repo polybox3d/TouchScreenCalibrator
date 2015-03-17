@@ -1,7 +1,7 @@
 #include "Calibration.h"
 
 Calibration::Calibration(QObject *parent) :
-    QObject(parent),_inversion_x(false),_inversion_y(false), _x_min(0), _x_max(0), _y_min(0), _y_max(0), _swap_axis(false), _device_id(8),_device_name("Noone")
+    QObject(parent),_inversion_x(false),_inversion_y(false), _x_min(0), _x_max(0), _y_min(0), _y_max(0), _swap_axis(false), _device_id(8),_device_name("Noone"),_threshold(15)
 {
 }
 

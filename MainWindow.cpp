@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _update_list.start( DELAY_UPDATE_LIST );
     connect(&_update_list, SIGNAL(timeout()), this, SLOT(updateXinputCalibratorList()));
 
+    ui->threshold->setValue( _calibration.threshold() );
     updateUi();
     updateXinputCalibratorList();
 }
@@ -161,6 +162,7 @@ void MainWindow::on_startCalibration_clicked()
     {
         parameters << "--fake";
     }*/
+    parameters << "--misclick"<<QString::number(_calibration.threshold()) ;
     _xinput_calibrator = new QProcess( this );
     connect( _xinput_calibrator , SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(xinputcalibratorFinished(int,QProcess::ExitStatus)));
     connect( _xinput_calibrator , SIGNAL(error(QProcess::ProcessError)), this,SLOT(xinputcalibratorError(QProcess::ProcessError)));
