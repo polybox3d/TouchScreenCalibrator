@@ -31,7 +31,10 @@ void MainWindow::xinputList(int, QProcess::ExitStatus)
     data.append( _xlist->readAllStandardOutput() );
     if ( data.indexOf("Error:") != -1 )
     {
-        ui->availableDevice->clear();
+        if ( ui->allDevice->checkState() == Qt::Unchecked)
+        {
+            ui->availableDevice->clear();
+        }
         ui->startCalibration->setEnabled( false );
     }
     else
@@ -42,7 +45,7 @@ void MainWindow::xinputList(int, QProcess::ExitStatus)
 
 void MainWindow::updateXinputCalibratorList()
 {
-    QString command = "../xinput_calibrator/src/xinput_calibrator";
+    QString command = QDir::homePath()+"/xinput_calibrator/src/xinput_calibrator";
     QStringList parameters;
     /*if ( ui->availableDevice->count() == 0 )
     {
