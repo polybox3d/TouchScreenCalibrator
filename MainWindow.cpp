@@ -126,7 +126,7 @@ void MainWindow::on_startCalibration_clicked()
     {
         _xinput_calibrator->kill();
     }
-    QString command = "../xinput_calibrator/src/xinput_calibrator";
+    QString command = QDir::homePath()+ "/xinput_calibrator"+"/src/xinput_calibrator";
     QStringList parameters;
     /*if ( ui->availableDevice->count() == 0 )
     {
