@@ -12,50 +12,17 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&_update_ui, SIGNAL(timeout()), this, SLOT(updateUi()));
 
     _update_list.start( DELAY_UPDATE_LIST );
-    connect(&_update_list, SIGNAL(timeout()), this, SLOT(updateXinputCalibratorList()));
 
     ui->threshold->setValue( _calibration.threshold() );
+
     updateUi();
-    updateXinputCalibratorList();
+
+    on_allDevice_stateChanged( 0 );
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::xinputList(int, QProcess::ExitStatus)
-{
-    QByteArray data;
-    data.append(_xlist->readAllStandardError() );
-    data.append( _xlist->readAllStandardOutput() );
-    if ( data.indexOf("Error:") != -1 )
-    {
-        if ( ui->allDevice->checkState() == Qt::Unchecked)
-        {
-            ui->availableDevice->clear();
-        }
-        ui->startCalibration->setEnabled( false );
-    }
-    else
-    {
-        ui->startCalibration->setEnabled( true );
-    }
-}
-
-void MainWindow::updateXinputCalibratorList()
-{
-    QString command = QDir::homePath()+"/xinput_calibrator/src/xinput_calibrator";
-    QStringList parameters;
-    /*if ( ui->availableDevice->count() == 0 )
-    {
-        parameters << "--fake";
-    }*/
-    QByteArray data;
-    _xlist = new QProcess( this );
-    connect( _xlist , SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(xinputList(int,QProcess::ExitStatus)));
-    //connect( _xlist , SIGNAL(error(QProcess::ProcessError)), this,SLOT(xinputList(QProcess::ProcessError)));
-    _xlist->start( command, parameters);
 }
 
 void MainWindow::updateUi()
@@ -173,13 +140,6 @@ void MainWindow::on_startCalibration_clicked()
 
 
     return;
-    /*QString command = "../xinput_calibrator/src/xinput_calibrator";
-    QStringList parameters;
-    parameters << "--list";
-    _xinput_calibrator = new QProcess( this );
-    connect( _xinput_calibrator , SIGNAL(finished(int,QProcess::ExitStatus)), this,SLOT(xinputcalibratorFinished(int,QProcess::ExitStatus)));
-    connect( _xinput_calibrator , SIGNAL(error(QProcess::ProcessError)), this,SLOT(xinputcalibratorError(QProcess::ProcessError)));
-    _xinput_calibrator->start( command, parameters);*/
 }
 
 void MainWindow::on_threshold_editingFinished()
@@ -301,6 +261,7 @@ void MainWindow::on_apply_clicked()
 void MainWindow::on_allDevice_stateChanged(int arg1)
 {
     ui->availableDevice->clear();
+
     if ( arg1 )
     {
         QString command_xinput = XINPUT_COMMAND;
@@ -331,6 +292,29 @@ void MainWindow::on_allDevice_stateChanged(int arg1)
             ui->availableDevice->addItem( device.section('\t',0,0).split("↳").at(1),
                                           device.section('\t',1,1).split("=").at(1) );
         }
+    }
+    else
+    {
+        QString command = QDir::homePath()+"/xinput_calibrator/src/xinput_calibrator";
+        QStringList parameters;
+        QByteArray data;
+
+        parameters << "--list";
+        _xlist = new QProcess( this );
+        _xlist->start( command, parameters );
+        while ( _xlist->waitForReadyRead() )
+        {
+            data.append(_xlist->readAll()+_xlist->readAllStandardError());
+        }
+        if ( data.indexOf("No calibratable devices found") != -1 )
+        {
+            ui->startCalibration->setEnabled( false );
+        }
+        else
+        {
+            ui->startCalibration->setEnabled( true );
+        }
+
     }
 }
 
