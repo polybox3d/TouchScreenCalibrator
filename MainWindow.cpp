@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     updateUi();
 
     on_allDevice_stateChanged( 0 );
+
 }
 
 MainWindow::~MainWindow()
@@ -107,9 +108,35 @@ void MainWindow::repaintButtons(QPushButton *b, bool state)
 void MainWindow::xinputcalibratorFinished(int exitCode, QProcess::ExitStatus exitStatus )
 {
 
-    QMessageBox messageBox;
-    messageBox.information(0, "Information",_xinput_calibrator->readAllStandardOutput()+_xinput_calibrator->readAllStandardError());
-    messageBox.setFixedSize(500,200);
+    QByteArray data = _xinput_calibrator->readAllStandardOutput();
+
+    QTextStream list(data);
+    QString line;
+    while ( !list.atEnd())
+    {
+        line = list.readLine();
+        int pos = -1;
+        if ( (pos = line.indexOf("min_x=")) != -1 )
+        {
+            _calibration.setX_min(embeddedstr2l(line, pos+6));
+        }
+        pos = -1;
+        if ( (pos = line.indexOf("max_x=")) != -1 )
+        {
+            _calibration.setX_max(embeddedstr2l(line, pos+6));
+        }
+        pos = -1;
+        if ( (pos = line.indexOf("min_y=")) != -1 )
+        {
+            _calibration.setY_min(embeddedstr2l(line, pos+6));
+        }
+        pos = -1;
+        if ( (pos = line.indexOf("max_y=")) != -1 )
+        {
+            _calibration.setY_max(embeddedstr2l(line, pos+6));
+        }
+    }
+
 
 }
 

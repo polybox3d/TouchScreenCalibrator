@@ -9,6 +9,8 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QAction>
+#include <iostream>
+#include <stdlib.h>
 
 #include "Calibration.h"
 
@@ -27,6 +29,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static long embeddedstr2l(QString str, int idx )
+    {
+        return strtol(&str.toStdString().c_str()[idx], NULL, 10);
+    }
 
 public slots:
     void updateUi();
@@ -59,8 +65,6 @@ private slots:
     void xinputcalibratorFinished(int,QProcess::ExitStatus);
     void xinputcalibratorError(QProcess::ProcessError);
 
-    void xinputList(int,QProcess::ExitStatus);
-
     void on_threshold_editingFinished();
 
     void on_test_clicked();
@@ -74,8 +78,6 @@ private slots:
     void on_allDevice_stateChanged(int arg1);
 
     void on_availableDevice_currentIndexChanged(int index);
-
-    void updateXinputCalibratorList();
 
 private:
     Ui::MainWindow *ui;
