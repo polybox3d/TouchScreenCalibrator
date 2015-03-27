@@ -36,13 +36,23 @@ void MainWindow::xinputList(int, QProcess::ExitStatus)
     else
     {
         ui->startCalibration->setEnabled( true );
+
+        QTextStream list(data);
+        QString device;
+        while ( !list.atEnd())
+        {
+            device = list.readLine();
+            ui->availableDevice->addItem( device.section('"',1,1),
+                                          device.split("=").at(1) );
+        }
     }
 }
 
 void MainWindow::updateXinputCalibratorList()
 {
-    QString command = "../xinput_calibrator/src/xinput_calibrator";
+    QString command = QDir::homePath()+ "/xinput_calibrator"+"/src/xinput_calibrator";
     QStringList parameters;
+    parameters << "--list";
     /*if ( ui->availableDevice->count() == 0 )
     {
         parameters << "--fake";
@@ -155,7 +165,7 @@ void MainWindow::on_startCalibration_clicked()
     {
         _xinput_calibrator->kill();
     }
-    QString command = "../xinput_calibrator/src/xinput_calibrator";
+    QString command = QDir::homePath()+ "/xinput_calibrator"+"/src/xinput_calibrator";
     QStringList parameters;
     /*if ( ui->availableDevice->count() == 0 )
     {
